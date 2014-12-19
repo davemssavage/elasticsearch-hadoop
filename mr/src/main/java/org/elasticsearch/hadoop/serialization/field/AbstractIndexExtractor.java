@@ -120,7 +120,7 @@ public abstract class AbstractIndexExtractor implements IndexExtractor, Settings
         sb.append("\",");
         sb.append("\"_type\":\"");
         append(sb, type, target);
-        sb.append("\"");
+        sb.append("\",");
 
         return sb.toString();
     }
