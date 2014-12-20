@@ -138,6 +138,28 @@ public class CommandTest {
         assertEquals(result, ba.toString());
     }
 
+    @Test
+    public void testType() throws Exception {
+        Settings settings = settings();
+        settings.setResourceWrite("foo/{s}");
+
+        create(settings).write(map).copyTo(ba);
+        String result = prefix() + "\"_type\":\"v\"}}" + map();
+        assertEquals(result, ba.toString());
+    }
+
+    @Test
+    public void testTypeWithJson() throws Exception {
+        Settings settings = settings();
+        settings.setProperty(ConfigurationOptions.ES_OUTPUT_JSON, "yes");
+        settings.setResourceWrite("foo/{s}");
+
+        String json = "{\"s\":\"v\",\"n\": 1}";
+        create(settings).write(json).copyTo(ba);
+
+        String result = prefix() + "\"_type\":\"v\"}}" + json;
+        assertEquals(result, ba.toString());
+    }
 
     @Test
     public void testAll() throws Exception {
