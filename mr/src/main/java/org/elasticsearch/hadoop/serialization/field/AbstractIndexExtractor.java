@@ -115,12 +115,13 @@ public abstract class AbstractIndexExtractor implements IndexExtractor, Settings
     @Override
     public String field(Object target) {
         StringBuilder sb = new StringBuilder();
+
         sb.append("\"_index\":\"");
-		append(sb, index, target);
+		    append(sb, index, target);
         sb.append("\",");
         sb.append("\"_type\":\"");
         append(sb, type, target);
-        sb.append("\",");
+        sb.append("\"");
 
         return sb.toString();
     }
