@@ -140,24 +140,27 @@ public class CommandTest {
 
     @Test
     public void testType() throws Exception {
+        assumeFalse(ConfigurationOptions.ES_OPERATION_UPDATE.equals(operation));
         Settings settings = settings();
         settings.setResourceWrite("foo/{s}");
 
         create(settings).write(map).copyTo(ba);
-        String result = prefix() + "\"_type\":\"v\"}}" + map();
+        String result = prefix() + "\"_index\":\"foo\",\"_type\":\"v\"}}" + map();
         assertEquals(result, ba.toString());
     }
 
     @Test
     public void testTypeWithJson() throws Exception {
+        assumeFalse(ConfigurationOptions.ES_OPERATION_UPDATE.equals(operation));
         Settings settings = settings();
-        settings.setProperty(ConfigurationOptions.ES_OUTPUT_JSON, "yes");
+        settings.setProperty(ConfigurationOptions.ES_INPUT_JSON, "yes");
+        settings.setProperty(ConfigurationOptions.ES_SERIALIZATION_WRITER_BYTES_CLASS, JdkBytesConverter.class.getName());
         settings.setResourceWrite("foo/{s}");
 
         String json = "{\"s\":\"v\",\"n\": 1}";
         create(settings).write(json).copyTo(ba);
 
-        String result = prefix() + "\"_type\":\"v\"}}" + json;
+        String result = prefix() + "\"_index\":\"foo\",\"_type\":\"v\"}}\n" + json + "\n";
         assertEquals(result, ba.toString());
     }
 
