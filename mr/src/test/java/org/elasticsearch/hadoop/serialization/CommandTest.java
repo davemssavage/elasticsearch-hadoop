@@ -55,7 +55,8 @@ public class CommandTest {
         return Arrays.asList(new Object[][] {
                 { ConfigurationOptions.ES_OPERATION_INDEX },
                 { ConfigurationOptions.ES_OPERATION_CREATE},
-                { ConfigurationOptions.ES_OPERATION_UPDATE }
+                { ConfigurationOptions.ES_OPERATION_UPDATE},
+                { ConfigurationOptions.ES_OPERATION_DELETE},
                 });
     }
 
@@ -72,6 +73,7 @@ public class CommandTest {
 
     @Test
     public void testNoHeader() throws Exception {
+        assumeFalse(ConfigurationOptions.ES_OPERATION_DELETE.equals(operation));
         assumeFalse(ConfigurationOptions.ES_OPERATION_UPDATE.equals(operation));
         create(settings()).write(map).copyTo(ba);
         String result = prefix() + "}}" + map();
@@ -80,6 +82,7 @@ public class CommandTest {
 
     @Test
     public void testConstantId() throws Exception {
+        assumeFalse(ConfigurationOptions.ES_OPERATION_DELETE.equals(operation));
         Settings settings = settings();
         noId = true;
         settings.setProperty(ConfigurationOptions.ES_MAPPING_ID, "<1>");
@@ -91,6 +94,7 @@ public class CommandTest {
 
     @Test
     public void testParent() throws Exception {
+        assumeFalse(ConfigurationOptions.ES_OPERATION_DELETE.equals(operation));
         Settings settings = settings();
         settings.setProperty(ConfigurationOptions.ES_MAPPING_PARENT, "<5>");
 
@@ -101,6 +105,7 @@ public class CommandTest {
 
     @Test
     public void testVersion() throws Exception {
+        assumeFalse(ConfigurationOptions.ES_OPERATION_DELETE.equals(operation));
         Settings settings = settings();
         settings.setProperty(ConfigurationOptions.ES_MAPPING_VERSION, "<3>");
 
@@ -111,6 +116,7 @@ public class CommandTest {
 
     @Test
     public void testTtl() throws Exception {
+        assumeFalse(ConfigurationOptions.ES_OPERATION_DELETE.equals(operation));
         Settings settings = settings();
         settings.setProperty(ConfigurationOptions.ES_MAPPING_TTL, "<2>");
 
@@ -121,6 +127,7 @@ public class CommandTest {
 
     @Test
     public void testTimestamp() throws Exception {
+        assumeFalse(ConfigurationOptions.ES_OPERATION_DELETE.equals(operation));
         Settings settings = settings();
         settings.setProperty(ConfigurationOptions.ES_MAPPING_TIMESTAMP, "<3>");
         create(settings).write(map).copyTo(ba);
@@ -130,6 +137,7 @@ public class CommandTest {
 
     @Test
     public void testRouting() throws Exception {
+        assumeFalse(ConfigurationOptions.ES_OPERATION_DELETE.equals(operation));
         Settings settings = settings();
         settings.setProperty(ConfigurationOptions.ES_MAPPING_ROUTING, "<4>");
 
@@ -141,6 +149,7 @@ public class CommandTest {
 
     @Test
     public void testAll() throws Exception {
+        assumeFalse(ConfigurationOptions.ES_OPERATION_DELETE.equals(operation));
         Settings settings = settings();
         settings.setProperty(ConfigurationOptions.ES_MAPPING_ID, "n");
         settings.setProperty(ConfigurationOptions.ES_MAPPING_TTL, "<2>");
@@ -148,6 +157,16 @@ public class CommandTest {
 
         create(settings).write(map).copyTo(ba);
         String result = "{\"" + operation + "\":{\"_id\":\"1\",\"_routing\":\"v\",\"_ttl\":\"2\"}}" + map();
+        assertEquals(result, ba.toString());
+    }
+
+    @Test
+    public void testDelete() {
+        assumeTrue(ConfigurationOptions.ES_OPERATION_DELETE.equals(operation));
+        Settings settings = settings();
+        settings.setProperty(ConfigurationOptions.ES_MAPPING_ID, "n");
+        create(settings).write(map).copyTo(ba);
+        String result = prefix() + "\"_id\":\"1\"}}";
         assertEquals(result, ba.toString());
     }
 
